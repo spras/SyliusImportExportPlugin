@@ -181,7 +181,16 @@ services:
     sylius.processor.payment_methods:
         class: FriendsOfSylius\SyliusImportExportPlugin\Processor\PaymentMethodProcessor
         arguments:
-            - "@sylius.factory.payment_method"
+            - "@sylius.custom_factory.payment_method"
             - "@sylius.repository.payment_method"
             - "@sylius.importer.metadata_validator"
             - ['Code', 'Name', 'Instructions', 'Gateway']
+
+    sylius.processor.taxonomies:
+        class: FriendsOfSylius\SyliusImportExportPlugin\Processor\TaxonomyProcessor
+        arguments:
+            - "@sylius.custom_factory.taxon"
+            - "@sylius.repository.taxon"
+            - "@sylius.locale_provider"
+            - "@sylius.importer.metadata_validator"
+            - ["Code", "Parent", "Locale", "Name", "Slug", "Description"]

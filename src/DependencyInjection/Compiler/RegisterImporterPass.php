@@ -51,20 +51,39 @@ final class RegisterImporterPass implements CompilerPassInterface
             return;
         }
 
+        $eventName = $this->buildEventName($type);
+        $templateName = $this->buildTemplateName($type);
         $container
             ->register(
                 $eventHookName,
                 BlockEventListener::class
             )
             ->setAutowired(false)
-            ->addArgument('@FOSSyliusImportExportPlugin/Crud/import.html.twig')
+            ->addArgument($templateName)
             ->addTag(
                 'kernel.event_listener',
                 [
-                    'event' => 'sonata.block.event.sylius.admin.' . $type . '.index.after_content',
+                    'event' => $eventName,
                     'method' => 'onBlockEvent',
                 ]
             )
         ;
     }
+
+    private function buildEventName(string $type): string
+    {
+        if ('taxon' === $type) {
+            return 'sonata.block.event.sylius.admin.taxon.create.after_content';
+        }
+        return sprintf('sonata.block.event.sylius.admin.%s.index.after_content', $type);
+    }
+
+    private function buildTemplateName(string $type): string
+    {
+        if ('taxon' === $type) {
+            return '@FOSSyliusImportExportPlugin/Taxonomy/import.html.twig';
+        }
+        return '@FOSSyliusImportExportPlugin/Crud/import.html.twig';
+    }
+
 }
